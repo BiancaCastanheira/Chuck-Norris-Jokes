@@ -5,24 +5,7 @@ import Loading from "./components/Loading";
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [joke, setJoke] = useState("");
-  const [jokeCategories, setJokeCategories] = useState([
-    "Animal",
-    "Career",
-    "Celebrity",
-    "Dev",
-    "Explicit",
-    "Fashion",
-    "Food",
-    "History",
-    "Money",
-    "Movie",
-    "Music",
-    "Political",
-    "Religion",
-    "Science",
-    "Sport",
-    "Travel",
-  ]);
+  const [jokeCategories, setJokeCategories] = useState([]);
 
   const getRandomJokes = () => {
     setIsLoading(true);
@@ -38,11 +21,18 @@ const App = () => {
       });
   };
 
-  useEffect(() => {
-    getRandomJokes();
-  }, []);
+  const getCategories = () => {
+    api
+      .get(`categories`)
+      .then((response) => {
+        setJokeCategories(response.data);
+      })
+      .catch((error) => {
+        console.error(`Algo deu errado na requisição das categorias: ${error}`);
+      });
+  };
+
   const getCategoryJoke = (categoryName) => {
-    console.log(categoryName);
     setIsLoading(true);
     api
       .get(`random?category=${categoryName.toLowerCase()}`)
@@ -56,6 +46,11 @@ const App = () => {
         );
       });
   };
+
+  useEffect(() => {
+    getCategories();
+    getRandomJokes();
+  }, []);
 
   return (
     <div className="App">
